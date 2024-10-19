@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "100061438940",
+    "project_id": "blood-donation-app-shishir",
+    "storage_bucket": "blood-donation-app-shishir.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100061438940:android:e47a823d615a2989426519",
+        "android_client_info": {
+          "package_name": "com.shishir.blood_donation_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACsfR_8ylNmXl-828EeBcm1M1B-AJJ9i0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
