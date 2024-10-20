@@ -24,12 +24,10 @@ class Profile : AppCompatActivity() {
         fetchUserData()
 
         mBinding.editIcon.setOnClickListener {
-            Toast.makeText(this, "Edit functionality to be implemented", Toast.LENGTH_SHORT).show()
-            // Start edit activity if implemented
-            // Intent(this, EditProfileActivity::class.java).also { intent ->
-            //     intent.putExtra(Constants.Email, userEmail)
-            //     startActivity(intent)
-            // }
+            Intent(this@Profile, ChangeDetails::class.java).also {
+                startActivity(it)
+                finish()
+            }
         }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
@@ -42,8 +40,7 @@ class Profile : AppCompatActivity() {
                     true
                 }
                 R.id.nav_profile -> {
-
-                    Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Already on Profile", Toast.LENGTH_SHORT).show()
                     true
                 }
                 R.id.nav_logout -> {
@@ -69,7 +66,7 @@ class Profile : AppCompatActivity() {
                     val mobileNumber = document.getString("Contact Number") ?: "N/A"
                     val bloodGroup = document.getString("Blood Group") ?: "N/A"
                     val city = document.getString("City") ?: "N/A"
-                    val availabilityStatus = document.getString("Availablity Status") ?: "N/A"
+                    val availabilityStatus = document.getString("Availability Status") ?: "N/A"
                     fNameDisp=fullName
                     setGreetingMessage()
                     mBinding.userInfoText.text = "Name: $fullName\n\nAddress: $address\n\nMobile Number: $mobileNumber\n\nBlood Group: $bloodGroup\n\nCity: $city"
