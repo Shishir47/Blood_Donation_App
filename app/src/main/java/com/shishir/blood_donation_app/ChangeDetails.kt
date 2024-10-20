@@ -20,8 +20,7 @@ class ChangeDetails : AppCompatActivity() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_change_details)
 
         val status = resources.getStringArray(R.array.availableStatus)
-        val statusAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, status)
+        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, status)
         mBinding.statusCD.adapter = statusAdapter
 
         val cities = resources.getStringArray(R.array.cities)
