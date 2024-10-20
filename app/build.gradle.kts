@@ -36,6 +36,7 @@ android {
     }
     buildFeatures{
         viewBinding= true
+        //noinspection DataBindingWithoutKapt
         dataBinding= true
     }
 }
@@ -49,6 +50,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

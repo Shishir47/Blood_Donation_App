@@ -6,15 +6,23 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/bloodheroico"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/bloodheroico"
         android:supportsRtl="true"
         android:theme="@style/Theme.Blood_Donation_App"
         tools:targetApi="31">
         <activity
+            android:name=".ChangeDetails"
+            android:exported="false" />
+        <activity
+            android:name=".FindBlood"
+            android:exported="false" />
+        <activity
+            android:name=".Profile"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.Blood_Donation_App.ActionBar"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
