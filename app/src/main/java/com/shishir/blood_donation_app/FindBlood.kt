@@ -76,7 +76,7 @@ class FindBlood : AppCompatActivity() {
 
     private fun filterUsers(bloodGroup: String, city: String) {
         var query: Query = firestore.collection("users")
-        query = query.whereEqualTo("Availablity Status", "Available")
+        query = query.whereEqualTo("Availability Status", "Available")
         if (bloodGroup != "All") {
             query = query.whereEqualTo("Blood Group", bloodGroup)
         }

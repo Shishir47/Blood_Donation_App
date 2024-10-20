@@ -23,6 +23,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            val intent = Intent(this, Profile::class.java)
+            intent.putExtra(Constants.EMAIL, FirebaseAuth.getInstance().currentUser?.email)
+            startActivity(intent)
+            finish()
+        }
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         val bloodGroups = resources.getStringArray(R.array.blood_groups)
