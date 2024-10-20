@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -70,6 +71,25 @@ class MainActivity : AppCompatActivity() {
         mBinding.flipLoginBtn.setOnClickListener {
             mBinding.flipper.showPrevious()
         }
+
+        val bloodDataSpinner: Spinner = findViewById(R.id.blood_group)
+        val bloodDataAdapter = ArrayAdapter.createFromResource(this,
+            R.array.blood_groups, R.layout.spinner_item)
+        bloodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        bloodDataSpinner.adapter = bloodDataAdapter
+
+        val cityDataSpinner: Spinner = findViewById(R.id.city)
+        val cityDataAdapter = ArrayAdapter.createFromResource(this,
+            R.array.cities, R.layout.spinner_item)
+        cityDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        cityDataSpinner.adapter = cityDataAdapter
+
+        val ableDataSpinner: Spinner = findViewById(R.id.availability)
+        val ableDataAdapter = ArrayAdapter.createFromResource(this,
+            R.array.availableStatus, R.layout.spinner_item)
+        ableDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        ableDataSpinner.adapter = ableDataAdapter
+
     }
 
     private fun saveUserData(
@@ -88,7 +108,7 @@ class MainActivity : AppCompatActivity() {
             "Donor Email" to email,
             "Blood Group" to bloodGroup,
             "City" to city,
-            "Availablity Status" to status
+            "Availability Status" to status
         )
 
         db.collection("users").document(email)
@@ -121,6 +141,25 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Account was Created", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this, "Account was not Created", Toast.LENGTH_SHORT).show()
+                }
+            }
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this, "User Logged In", Toast.LENGTH_SHORT).show()
+                    if (email.isNotEmpty()) {
+                        Intent(this@MainActivity, Profile::class.java).also {
+                            it.putExtra(Constants.EMAIL, email)
+                            startActivity(it)
+                            finish()
+                        }
+                    }
+                } else {
+                    Toast.makeText(
+                        this,
+                        "User Login Failed\nSomething Went Wrong!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }

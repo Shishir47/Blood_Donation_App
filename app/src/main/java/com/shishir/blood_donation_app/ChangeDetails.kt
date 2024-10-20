@@ -2,6 +2,7 @@ package com.shishir.blood_donation_app
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,25 +22,21 @@ class ChangeDetails : AppCompatActivity() {
         val status = resources.getStringArray(R.array.availableStatus)
         val statusAdapter =
             ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, status)
-        mBinding.status.adapter = statusAdapter
+        mBinding.statusCD.adapter = statusAdapter
 
         val cities = resources.getStringArray(R.array.cities)
         val cityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, cities)
-        mBinding.city.adapter = cityAdapter
+        mBinding.cityCD.adapter = cityAdapter
 
         mBinding.changeInfo.setOnClickListener {
             saveInfoChanges()
-            Intent(this@ChangeDetails, Profile::class.java).also {
-                startActivity(it)
-                finish()
-            }
-        }
 
-        mBinding.cancelInfo.setOnClickListener {
-            Intent(this@ChangeDetails, Profile::class.java).also {
-                startActivity(it)
-                finish()
+            val intent = Intent(this@ChangeDetails, Profile::class.java).apply {
+                putExtra("Email", FirebaseAuth.getInstance().currentUser?.email)
             }
+            startActivity(intent)
+            finish()
+
         }
     }
 
@@ -61,14 +58,22 @@ class ChangeDetails : AppCompatActivity() {
                     .ifEmpty { document.getString("Contact Number") ?: "N/A" }
 
                 val bloodGroup = document.getString("Blood Group") ?: "N/A"
-                val city =
-                    mBinding.city.selectedItem?.toString() ?: document.getString("City") ?: "N/A"
-                val status = mBinding.status.selectedItem?.toString()
+                val city = mBinding.cityCD.selectedItem?.toString()
+                    ?: document.getString("City") ?: "N/A"
+                val status = mBinding.statusCD.selectedItem?.toString()
                     ?: document.getString("Availability Status") ?: "N/A"
 
+                Log.d(
+                    "ChangeDetails",
+                    "Saving user data: $fullName, $fAddress, $mobileNum, $bloodGroup, $city, $status"
+                )
+
                 saveUserData(fullName, fAddress, mobileNum, bloodGroup, city, email, status)
+            } else {
+                Toast.makeText(this, "No user data found", Toast.LENGTH_SHORT).show()
             }
-        }.addOnFailureListener {
+        }.addOnFailureListener { e ->
+            Log.e("ChangeDetails", "Failed to retrieve data from Firestore", e)
             Toast.makeText(this, "Failed to retrieve data from Firestore", Toast.LENGTH_SHORT)
                 .show()
         }
@@ -99,7 +104,9 @@ class ChangeDetails : AppCompatActivity() {
                 Toast.makeText(this, "Data Saved Successfully", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
+                Log.e("ChangeDetails", "Error saving data", e)
                 Toast.makeText(this, "Error saving data: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 }

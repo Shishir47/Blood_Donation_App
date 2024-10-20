@@ -1,8 +1,10 @@
 package com.shishir.blood_donation_app
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -16,6 +18,7 @@ class Profile : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var userEmail: String
     private lateinit var fNameDisp: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -26,16 +29,20 @@ class Profile : AppCompatActivity() {
         mBinding.editIcon.setOnClickListener {
             Intent(this@Profile, ChangeDetails::class.java).also {
                 startActivity(it)
+                onPause()
             }
         }
         mBinding.userStatus.setOnClickListener {
             Intent(this@Profile, ChangeDetails::class.java).also {
                 startActivity(it)
+                onPause()
             }
         }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+        bottomNavigationView.selectedItemId = R.id.nav_profile
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_find_blood -> {
                     Intent(this@Profile, FindBlood::class.java).also {
@@ -50,11 +57,7 @@ class Profile : AppCompatActivity() {
                 }
 
                 R.id.nav_logout -> {
-                    FirebaseAuth.getInstance().signOut()
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+                    showLogoutConfirmationDialog()
                     true
                 }
 
@@ -63,7 +66,30 @@ class Profile : AppCompatActivity() {
         }
     }
 
+    private fun showLogoutConfirmationDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Logout Confirmation")
+        builder.setMessage("Are you sure you want to log out?")
+
+        builder.setPositiveButton("Yes") { dialog: DialogInterface, _: Int ->
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
+        }
+
+        builder.setNegativeButton("No") { dialog: DialogInterface, _: Int ->
+            dialog.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
     private fun fetchUserData() {
+        if (!::userEmail.isInitialized) return
+
         db.collection("users").document(userEmail)
             .get()
             .addOnSuccessListener { document ->
@@ -90,6 +116,11 @@ class Profile : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fetchUserData()
     }
 
     private fun setGreetingMessage() {

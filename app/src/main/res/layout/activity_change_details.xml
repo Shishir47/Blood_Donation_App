@@ -104,7 +104,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Spinner
-                    android:id="@+id/status"
+                    android:id="@+id/statusCD"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -117,7 +117,7 @@
                     android:spinnerMode="dropdown" />
 
                 <Spinner
-                    android:id="@+id/city"
+                    android:id="@+id/cityCD"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
@@ -138,17 +138,6 @@
                     android:background="@drawable/button_background"
                     android:padding="12dp"
                     android:text="Change Details"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/cancelInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:background="@drawable/button_background"
-                    android:padding="12dp"
-                    android:text="Cancel"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold" />
             </androidx.appcompat.widget.LinearLayoutCompat>
