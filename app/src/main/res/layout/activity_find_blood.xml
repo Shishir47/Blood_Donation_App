@@ -12,20 +12,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="top"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:layout_gravity="top">
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/findBloodTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Find Blood"
                 android:layout_gravity="center"
-                android:textSize="24sp"
-                android:textStyle="bold"
+                android:layout_marginTop="15dp"
+                android:text="Find Blood"
                 android:textColor="#FFFFFF"
-                android:layout_marginTop="15dp"/>
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -35,26 +35,26 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Blood Group"
-                    android:textSize="20sp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="4dp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
                     android:layout_weight="5"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:text="Blood Group"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="City Name"
-                    android:textSize="20sp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="4dp"
-                    android:textStyle="bold"
-                    android:textColor="#FFFFFF"
                     android:layout_weight="5"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:text="City Name"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -67,21 +67,21 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:background="@drawable/dropdown_background"/>
+                    android:background="@drawable/dropdown_background" />
 
                 <Spinner
                     android:id="@+id/sortByCity"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:background="@drawable/dropdown_background"/>
+                    android:background="@drawable/dropdown_background" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/userRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="12dp"/>
+                android:layout_marginTop="12dp" />
         </LinearLayout>
     </FrameLayout>
 </layout>

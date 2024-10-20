@@ -26,7 +26,11 @@ class Profile : AppCompatActivity() {
         mBinding.editIcon.setOnClickListener {
             Intent(this@Profile, ChangeDetails::class.java).also {
                 startActivity(it)
-                finish()
+            }
+        }
+        mBinding.userStatus.setOnClickListener {
+            Intent(this@Profile, ChangeDetails::class.java).also {
+                startActivity(it)
             }
         }
 
@@ -34,15 +38,17 @@ class Profile : AppCompatActivity() {
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_find_blood -> {
-                    Intent(this@Profile, FindBlood::class.java).also{
+                    Intent(this@Profile, FindBlood::class.java).also {
                         startActivity(it)
                     }
                     true
                 }
+
                 R.id.nav_profile -> {
                     Toast.makeText(this, "Already on Profile", Toast.LENGTH_SHORT).show()
                     true
                 }
+
                 R.id.nav_logout -> {
                     FirebaseAuth.getInstance().signOut()
                     val intent = Intent(this, MainActivity::class.java)
@@ -51,6 +57,7 @@ class Profile : AppCompatActivity() {
                     Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
                     true
                 }
+
                 else -> false
             }
         }
@@ -67,16 +74,21 @@ class Profile : AppCompatActivity() {
                     val bloodGroup = document.getString("Blood Group") ?: "N/A"
                     val city = document.getString("City") ?: "N/A"
                     val availabilityStatus = document.getString("Availability Status") ?: "N/A"
-                    fNameDisp=fullName
+                    fNameDisp = fullName
                     setGreetingMessage()
-                    mBinding.userInfoText.text = "Name: $fullName\n\nAddress: $address\n\nMobile Number: $mobileNumber\n\nBlood Group: $bloodGroup\n\nCity: $city"
+                    mBinding.userInfoText.text =
+                        "Name: $fullName\n\nAddress: $address\n\nMobile Number: $mobileNumber\n\nBlood Group: $bloodGroup\n\nCity: $city"
                     mBinding.userStatus.text = "Status: $availabilityStatus"
                 } else {
                     Toast.makeText(this, "No such user found", Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(this, "Error fetching user data: ${exception.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Error fetching user data: ${exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
     }
 
@@ -87,7 +99,7 @@ class Profile : AppCompatActivity() {
             currentHour < 17 -> "Good Afternoon"
             else -> "Good Evening"
         }
-        fNameDisp= fNameDisp.substringBefore(' ')
+        fNameDisp = fNameDisp.substringBefore(' ')
         mBinding.greetingTextView.text = "$greeting, \n$fNameDisp"
     }
 }

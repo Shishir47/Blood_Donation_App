@@ -26,7 +26,8 @@ class MainActivity : AppCompatActivity() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         val bloodGroups = resources.getStringArray(R.array.blood_groups)
-        val bloodAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, bloodGroups)
+        val bloodAdapter =
+            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, bloodGroups)
         mBinding.bloodGroup.adapter = bloodAdapter
 
         val cities = resources.getStringArray(R.array.cities)
@@ -34,7 +35,8 @@ class MainActivity : AppCompatActivity() {
         mBinding.city.adapter = cityAdapter
 
         val availability = resources.getStringArray(R.array.availableStatus)
-        val availabilityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, availability)
+        val availabilityAdapter =
+            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, availability)
         mBinding.availability.adapter = availabilityAdapter
 
         mBinding.bloodGroup.isEnabled = true
@@ -49,20 +51,29 @@ class MainActivity : AppCompatActivity() {
         mBinding.availability.isClickable = true
         mBinding.availability.isFocusable = true
 
-        mBinding.signInBtn.setOnClickListener{
+        mBinding.signInBtn.setOnClickListener {
             login()
         }
-        mBinding.signUpBtn.setOnClickListener{
+        mBinding.signUpBtn.setOnClickListener {
             createAccount()
         }
-        mBinding.flipRegisterBtn.setOnClickListener{
+        mBinding.flipRegisterBtn.setOnClickListener {
             mBinding.flipper.showNext()
         }
-        mBinding.flipLoginBtn.setOnClickListener{
+        mBinding.flipLoginBtn.setOnClickListener {
             mBinding.flipper.showPrevious()
         }
     }
-    private fun saveUserData(fullName: String, fAddress: String,mobileNum: String, email: String, bloodGroup: String, city: String, status: String) {
+
+    private fun saveUserData(
+        fullName: String,
+        fAddress: String,
+        mobileNum: String,
+        email: String,
+        bloodGroup: String,
+        city: String,
+        status: String
+    ) {
         val user = hashMapOf(
             "Full Name" to fullName,
             "Address" to fAddress,
@@ -82,52 +93,55 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error saving data: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
     private fun createAccount() {
         val fullName = mBinding.registerName.editText?.text.toString()
-        val fAddress= mBinding.registerAddress.editText?.text.toString()
+        val fAddress = mBinding.registerAddress.editText?.text.toString()
         val mobileNum = mBinding.registerNumber.editText?.text.toString()
         val email = mBinding.registerEmail.editText?.text.toString()
         val pass = mBinding.registerPass.editText?.text.toString()
         val bloodGroup = mBinding.bloodGroup.selectedItem.toString()
         val city = mBinding.city.selectedItem.toString()
         val status = mBinding.availability.selectedItem.toString()
-        if(email.isEmpty() || pass.isEmpty()){
+        if (email.isEmpty() || pass.isEmpty()) {
             Toast.makeText(this, "Enter Your Email/Password", Toast.LENGTH_SHORT).show()
             return
         }
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email,pass)
-            .addOnCompleteListener(this){ task ->
-                if(task.isSuccessful){
-                    saveUserData(fullName, fAddress,mobileNum, email, bloodGroup, city, status)
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    saveUserData(fullName, fAddress, mobileNum, email, bloodGroup, city, status)
                     Toast.makeText(this, "Account was Created", Toast.LENGTH_SHORT).show()
-                }
-                else{
+                } else {
                     Toast.makeText(this, "Account was not Created", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
     private fun login() {
-        val email= mBinding.loginEmail.editText?.text.toString()
-        val pass= mBinding.loginPass.editText?.text.toString().trim()
-        if(email.isEmpty() || pass.isEmpty()){
+        val email = mBinding.loginEmail.editText?.text.toString()
+        val pass = mBinding.loginPass.editText?.text.toString().trim()
+        if (email.isEmpty() || pass.isEmpty()) {
             Toast.makeText(this, "Enter Your Email/Password", Toast.LENGTH_SHORT).show()
             return
         }
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,pass)
-            .addOnCompleteListener(this){ task ->
-                if(task.isSuccessful){
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
                     Toast.makeText(this, "User Logged In", Toast.LENGTH_SHORT).show()
-                    if(email.isNotEmpty()) {
+                    if (email.isNotEmpty()) {
                         Intent(this@MainActivity, Profile::class.java).also {
                             it.putExtra(Constants.EMAIL, email)
                             startActivity(it)
                             finish()
                         }
                     }
-                }
-                else{
-                    Toast.makeText(this, "User Login Failed\nSomething Went Wrong!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "User Login Failed\nSomething Went Wrong!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
     }
