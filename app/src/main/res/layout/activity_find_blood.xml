@@ -67,14 +67,24 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:background="@drawable/dropdown_background" />
+                    android:background="@drawable/dropdown_background"
+                    android:spinnerMode="dropdown"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"/>
 
                 <Spinner
                     android:id="@+id/sortByCity"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
-                    android:background="@drawable/dropdown_background" />
+                    android:background="@drawable/dropdown_background"
+                    android:spinnerMode="dropdown"
+                    android:clickable="true"
+                    android:enabled="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.recyclerview.widget.RecyclerView

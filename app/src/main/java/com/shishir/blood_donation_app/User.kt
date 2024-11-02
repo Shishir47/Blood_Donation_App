@@ -9,5 +9,5 @@ data class User(
     @JvmField @PropertyName("Blood Group") val bloodGroup: String = "",
     @JvmField @PropertyName("City") val city: String = "",
     @JvmField @PropertyName("Contact Number") val contactNumber: String = "",
-    @JvmField @PropertyName("Email") val donorEmail: String = ""
+    @JvmField @PropertyName("Donor Email") val donorEmail: String = ""
 )

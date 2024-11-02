@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -30,12 +31,13 @@ class FindBlood : AppCompatActivity() {
 
         val sortByBlood = resources.getStringArray(R.array.sortByBlood)
         val sortByBloodAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, sortByBlood)
+            ArrayAdapter(this, R.layout.spinner_item, sortByBlood)
         mBinding.sortByBlood.adapter = sortByBloodAdapter
+
 
         val sortByCity = resources.getStringArray(R.array.sortByCity)
         val sortByCityAdapter =
-            ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, sortByCity)
+            ArrayAdapter(this, R.layout.spinner_item, sortByCity)
         mBinding.sortByCity.adapter = sortByCityAdapter
 
 

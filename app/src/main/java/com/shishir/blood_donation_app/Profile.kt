@@ -2,6 +2,8 @@ package com.shishir.blood_donation_app
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -12,18 +14,30 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shishir.blood_donation_app.SveData.Constants
 import com.shishir.blood_donation_app.databinding.ActivityProfileBinding
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okio.IOException
+import org.json.JSONObject
 
 class Profile : AppCompatActivity() {
+    companion object {
+        private const val REQUEST_WRITE_STORAGE = 100
+    }
     private lateinit var mBinding: ActivityProfileBinding
     private val db = FirebaseFirestore.getInstance()
     private lateinit var userEmail: String
     private lateinit var fNameDisp: String
+    private val client = OkHttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_profile)
         userEmail = intent.getStringExtra(Constants.EMAIL) ?: return
+        userEmail= FirebaseAuth.getInstance().currentUser?.email.toString()
         fetchUserData()
 
         mBinding.editIcon.setOnClickListener {
@@ -38,6 +52,7 @@ class Profile : AppCompatActivity() {
                 onPause()
             }
         }
+        checkForUpdates()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.selectedItemId = R.id.nav_profile
@@ -65,7 +80,75 @@ class Profile : AppCompatActivity() {
             }
         }
     }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
+        if (requestCode == REQUEST_WRITE_STORAGE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, now check for updates
+                checkForUpdates()
+            } else {
+                // Permission denied, inform the user and prevent further actions
+                Toast.makeText(this, "Permission required to download updates", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun checkForUpdates() {
+        val url = "https://raw.githubusercontent.com/Shishir47/Blood_Donation_App/master/version.json"
+
+        val request = Request.Builder().url(url).build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Handle failure in network request
+                runOnUiThread {
+                    Toast.makeText(this@Profile, "Failed to check for updates", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    response.body?.let { responseBody ->
+                        val json = JSONObject(responseBody.string())
+                        val latestVersionCode = json.getInt("versionCode")
+                        val apkUrl = json.getString("apkUrl")
+
+                        // Get current version code of the app
+                        val currentVersionCode = packageManager.getPackageInfo(packageName, 0).versionCode
+
+                        // Compare the latest version with the current version
+                        if (latestVersionCode > currentVersionCode) {
+                            runOnUiThread {
+                                showUpdateDialog(apkUrl)
+                            }
+                        }
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@Profile, "Failed to fetch update info", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun showUpdateDialog(apkUrl: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("New Update Available")
+        builder.setMessage("A newer version of the app is available. Please update to the latest version.")
+        builder.setPositiveButton("Update") { _, _ ->
+            // Start browser to download the APK
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl))
+            startActivity(intent)
+        }
+        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+        builder.setCancelable(false)
+        builder.show()
+    }
     private fun showLogoutConfirmationDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Logout Confirmation")

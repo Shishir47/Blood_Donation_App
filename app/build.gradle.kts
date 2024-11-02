@@ -12,8 +12,8 @@ android {
         applicationId = "com.shishir.blood_donation_app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0"
+        versionCode = 8
+        versionName = "8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.okhttp)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -2,12 +2,17 @@ package com.shishir.blood_donation_app
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.databinding.DataBindingUtil
@@ -15,22 +20,28 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shishir.blood_donation_app.databinding.ActivityMainBinding
 import com.shishir.blood_donation_app.SveData.Constants
-
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okio.IOException
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var mBinding: ActivityMainBinding
     private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         if (FirebaseAuth.getInstance().currentUser != null) {
             val intent = Intent(this, Profile::class.java)
             intent.putExtra(Constants.EMAIL, FirebaseAuth.getInstance().currentUser?.email)
             startActivity(intent)
             finish()
         }
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         val bloodGroups = resources.getStringArray(R.array.blood_groups)
@@ -92,6 +103,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
     private fun saveUserData(
         fullName: String,
         fAddress: String,
@@ -130,64 +142,53 @@ class MainActivity : AppCompatActivity() {
         val bloodGroup = mBinding.bloodGroup.selectedItem.toString()
         val city = mBinding.city.selectedItem.toString()
         val status = mBinding.availability.selectedItem.toString()
+
         if (email.isEmpty() || pass.isEmpty()) {
             Toast.makeText(this, "Enter Your Email/Password", Toast.LENGTH_SHORT).show()
             return
         }
+
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     saveUserData(fullName, fAddress, mobileNum, email, bloodGroup, city, status)
                     Toast.makeText(this, "Account was Created", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "Account was not Created", Toast.LENGTH_SHORT).show()
-                }
-            }
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, "User Logged In", Toast.LENGTH_SHORT).show()
-                    if (email.isNotEmpty()) {
-                        Intent(this@MainActivity, Profile::class.java).also {
-                            it.putExtra(Constants.EMAIL, email)
-                            startActivity(it)
-                            finish()
+
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
+                        .addOnCompleteListener(this) { signInTask ->
+                            if (signInTask.isSuccessful) {
+                                Toast.makeText(this, "User Logged In", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@MainActivity, Profile::class.java).apply {
+                                    putExtra(Constants.EMAIL, email)
+                                }
+                                startActivity(intent)
+                            }
                         }
-                    }
                 } else {
-                    Toast.makeText(
-                        this,
-                        "User Login Failed\nSomething Went Wrong!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
     private fun login() {
         val email = mBinding.loginEmail.editText?.text.toString()
-        val pass = mBinding.loginPass.editText?.text.toString().trim()
+        val pass = mBinding.loginPass.editText?.text.toString()
+
         if (email.isEmpty() || pass.isEmpty()) {
             Toast.makeText(this, "Enter Your Email/Password", Toast.LENGTH_SHORT).show()
             return
         }
+
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "User Logged In", Toast.LENGTH_SHORT).show()
-                    if (email.isNotEmpty()) {
-                        Intent(this@MainActivity, Profile::class.java).also {
-                            it.putExtra(Constants.EMAIL, email)
-                            startActivity(it)
-                            finish()
-                        }
+                    val intent = Intent(this@MainActivity, Profile::class.java).apply {
+                        putExtra(Constants.EMAIL, email)
                     }
+                    startActivity(intent)
                 } else {
-                    Toast.makeText(
-                        this,
-                        "User Login Failed\nSomething Went Wrong!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(this, "Authentication failed.", Toast.LENGTH_SHORT).show()
                 }
             }
     }

@@ -20,11 +20,11 @@ class ChangeDetails : AppCompatActivity() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_change_details)
 
         val status = resources.getStringArray(R.array.availableStatus)
-        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, status)
+        val statusAdapter = ArrayAdapter(this, R.layout.spinner_item, status)
         mBinding.statusCD.adapter = statusAdapter
 
         val cities = resources.getStringArray(R.array.cities)
-        val cityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, cities)
+        val cityAdapter = ArrayAdapter(this, R.layout.spinner_item, cities)
         mBinding.cityCD.adapter = cityAdapter
 
         mBinding.changeInfo.setOnClickListener {
@@ -58,7 +58,7 @@ class ChangeDetails : AppCompatActivity() {
 
                 val bloodGroup = document.getString("Blood Group") ?: "N/A"
                 val city = mBinding.cityCD.selectedItem?.toString()
-                    ?: document.getString("City") ?: "N/A"
+                    ?.ifEmpty{ document.getString("City") ?: "N/A"}
                 val status = mBinding.statusCD.selectedItem?.toString()
                     ?: document.getString("Availability Status") ?: "N/A"
 
@@ -67,7 +67,8 @@ class ChangeDetails : AppCompatActivity() {
                     "Saving user data: $fullName, $fAddress, $mobileNum, $bloodGroup, $city, $status"
                 )
 
-                saveUserData(fullName, fAddress, mobileNum, bloodGroup, city, email, status)
+                saveUserData(fullName, fAddress, mobileNum, bloodGroup,
+                    city.toString(), email, status)
             } else {
                 Toast.makeText(this, "No user data found", Toast.LENGTH_SHORT).show()
             }
@@ -93,7 +94,7 @@ class ChangeDetails : AppCompatActivity() {
             "Contact Number" to mobileNum,
             "Blood Group" to bloodGroup,
             "City" to city,
-            "Email" to email,
+            "Donor Email" to email,
             "Availability Status" to status
         )
 
