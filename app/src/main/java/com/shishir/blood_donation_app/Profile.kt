@@ -26,6 +26,7 @@ class Profile : AppCompatActivity() {
     companion object {
         private const val REQUEST_WRITE_STORAGE = 100
     }
+
     private lateinit var mBinding: ActivityProfileBinding
     private val db = FirebaseFirestore.getInstance()
     private lateinit var userEmail: String
@@ -37,7 +38,7 @@ class Profile : AppCompatActivity() {
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_profile)
         userEmail = intent.getStringExtra(Constants.EMAIL) ?: return
-        userEmail= FirebaseAuth.getInstance().currentUser?.email.toString()
+        userEmail = FirebaseAuth.getInstance().currentUser?.email.toString()
         fetchUserData()
 
         mBinding.editIcon.setOnClickListener {
@@ -52,6 +53,7 @@ class Profile : AppCompatActivity() {
                 onPause()
             }
         }
+
         checkForUpdates()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
@@ -80,6 +82,7 @@ class Profile : AppCompatActivity() {
             }
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -89,24 +92,24 @@ class Profile : AppCompatActivity() {
 
         if (requestCode == REQUEST_WRITE_STORAGE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, now check for updates
                 checkForUpdates()
             } else {
-                // Permission denied, inform the user and prevent further actions
-                Toast.makeText(this, "Permission required to download updates", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permission required to download updates", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
 
     private fun checkForUpdates() {
-        val url = "https://raw.githubusercontent.com/Shishir47/Blood_Donation_App/master/version.json"
+        val url =
+            "https://raw.githubusercontent.com/Shishir47/Blood_Donation_App/master/version.json"
 
         val request = Request.Builder().url(url).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                // Handle failure in network request
                 runOnUiThread {
-                    Toast.makeText(this@Profile, "Failed to check for updates", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@Profile, "Failed to check for updates", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
 
@@ -116,11 +119,9 @@ class Profile : AppCompatActivity() {
                         val json = JSONObject(responseBody.string())
                         val latestVersionCode = json.getInt("versionCode")
                         val apkUrl = json.getString("apkUrl")
+                        val currentVersionCode =
+                            packageManager.getPackageInfo(packageName, 0).versionCode
 
-                        // Get current version code of the app
-                        val currentVersionCode = packageManager.getPackageInfo(packageName, 0).versionCode
-
-                        // Compare the latest version with the current version
                         if (latestVersionCode > currentVersionCode) {
                             runOnUiThread {
                                 showUpdateDialog(apkUrl)
@@ -129,7 +130,11 @@ class Profile : AppCompatActivity() {
                     }
                 } else {
                     runOnUiThread {
-                        Toast.makeText(this@Profile, "Failed to fetch update info", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@Profile,
+                            "Failed to fetch update info",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -141,7 +146,6 @@ class Profile : AppCompatActivity() {
         builder.setTitle("New Update Available")
         builder.setMessage("A newer version of the app is available. Please update to the latest version.")
         builder.setPositiveButton("Update") { _, _ ->
-            // Start browser to download the APK
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl))
             startActivity(intent)
         }
@@ -149,6 +153,7 @@ class Profile : AppCompatActivity() {
         builder.setCancelable(false)
         builder.show()
     }
+
     private fun showLogoutConfirmationDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Logout Confirmation")
